@@ -10,8 +10,10 @@ function sendData() {
   const words = splitWords(data, splitter);
   const docs = splitDocs(data, splitter);
   const TF_IDF = tfIdf(words, docs);
+  const clusters = KMeans(TF_IDF, 3);
+  console.log(clusters);
   const out = findNearestPair(TF_IDF);
-  setOutput(out, docs)
+  setOutput(out, docs);
 }
 
 function setOutput(output, docs) {
@@ -26,6 +28,7 @@ function setOutput(output, docs) {
 
 function splitDocs(data, splitter) {
   const docs = data.toLowerCase().split(splitter); 
+  //pitäis jättää 
   return docs.filter(function (el) { //filter empty ones out
     return el != '';
   });
@@ -49,7 +52,7 @@ function findNearestPair(data) {
     let distVer = [];
     for (let y = 0; y < N; y++) {
       const dist = manhattanDist(data[x], data[y]);
-      if (dist < minDist) {
+      if (dist < minDist && dist != 0) { //dublicates doesnt count as neighbors
         minDist = dist;
         minIx = x;
         minIy = y;
@@ -63,7 +66,7 @@ function findNearestPair(data) {
 
 function manhattanDist(a, b) {
   if (a == b) {
-    return Infinity;
+    return 0;
   }
 
   let d = 0;
@@ -75,7 +78,78 @@ function manhattanDist(a, b) {
 
 function sqrEuclideanDist(a, b) {
   //euclidinen etäisyys funkkari tänne
-  return 0;
+  if (a == b) {
+    return Infinity;
+  }
+  let d = 0;
+  for (const i in a) {
+    d += Math.abs( a[i] - b[i] )**2
+  }
+  return d;
+}
+
+function KMeans(data, K) {
+  const N = data.length;
+  const V = data[0].length;
+
+  //create random centers
+
+  //create array with the data in random order to pick centers from
+  const rndData = data.slice(0).sort(function(a, b) { 
+    return 0.5 - Math.random();
+  });
+  let centers = rndData.slice(N-K);
+
+  console.log(data);
+  console.log(centers);
+
+  //for (let i = 0; i < K; i++) {
+    //this need to stay in bounds with the furthes coordinates or else result be unbalanced
+    //just pic random document vector instead
+    //or the one that are furthest apart????
+    //actually bound for coordinates are good, probably betwee 0-.5 anyway
+    //yes, upper was correct, division by 4 improved
+    //somehow it needs to be ensured that every cluster gets document (welp, random document would do this)
+    //const center = Array.from({length: V}, () => (Math.random()/100000));
+    //centers.push(center);
+  //}
+  
+  let clusters = [];
+  for (const center in centers) {
+    let cluster = [];
+    clusters.push(cluster);
+  }
+
+  //console.log(data);
+  console.log(clusters);
+
+  //there is something very strange happening, cluster are gettin populated without this return here
+  // I thiink its just chromes inspector, should report a bug
+  //return
+  //this will repeat in some future
+  for (const docI in data) {
+    const doc = data[docI];
+    let minDist = Infinity;
+    let minI = -1;
+    for (const centI in centers) {
+      const center = centers[centI];
+      const dist = manhattanDist(doc, center);
+      if (dist < minDist) {
+        minDist = dist;
+        minI = centI
+      }
+    }
+    clusters[minI].push(docI);
+  }
+
+
+  //console.log(N);
+  console.log(clusters); //antaa hesarin artikkelilla undefined
+  //console.log(centers);
+  
+  //= Array.from({length: 40}, () => Math.random());
+
+  return -1; //palautus muotoa [[custerin indeksit etäisyytenä keskustasta], seuraava clusteri...]
 }
 
 function tfIdf(words, docs) {
