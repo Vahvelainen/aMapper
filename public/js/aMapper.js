@@ -9,17 +9,59 @@ function sendData() {
   const splitter = '\n'; //only linebreaks for starter
   const words = splitWords(data, splitter);
   const docs = splitDocs(data, splitter);
-  const out = tfIdf(words, docs);
-  setOutput(out)
+  const TF_IDF = tfIdf(words, docs);
+  const out = findNearestPair(TF_IDF);
+  setOutput(out, docs)
 }
 
-function setOutput(output) {
-  $('#aMapper-output')[0].innerHTML = output;
+function setOutput(output, docs) {
+  const outElem = $('#aMapper-output')[0];
+  outElem.innerHTML = '';
+  output.forEach(function(i){
+    const p = document.createElement("p");
+    p.innerHTML = docs[i];
+    outElem.append(p);
+  });
 }
 
 function splitDocs(data, splitter) {
   const docs = data.toLowerCase().split(splitter); 
   return docs;
+}
+
+function findNearestPair(data) {
+  const N = data.length;
+  let minDist = Infinity;
+  let minIx = -1;
+  let minIy = -1;
+  for (let x = 0; x < N; x++) {
+    for (let y = 0; y < N; y++) {
+      const dist = manhattanDist(data[x], data[y]);
+      if (dist < minDist) {
+        minDist = dist;
+        minIx = x;
+        minIy = y;
+      }
+    }
+  }
+  return [minIx, minIy];
+}
+
+function manhattanDist(a, b) {
+  if (a == b) {
+    return Infinity;
+  }
+
+  let d = 0;
+  for (const i in a) {
+    d += Math.abs( a[i] - b[i] )
+  }
+  return d;
+}
+
+function sqrEuclideanDist(a, b) {
+  //euclidinen etäisyys funkkari tänne
+  return 0;
 }
 
 function splitWords(data, splitter) {
@@ -64,11 +106,6 @@ function tfIdf(words, docs) {
   });
 
   return tf_idfs;
-}
-
-function euclideanDist(a, b) {
-  //euclidinen etäisyys funkkari tänne
-  return 0;
 }
 
 function replaceAll(str, find, replace) {
