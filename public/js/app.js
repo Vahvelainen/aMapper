@@ -1,4 +1,5 @@
 import Frontpage from './views/Frontpage.js';
+import './aMapper.js';
 
 const router = async () => {
   const routes = [
