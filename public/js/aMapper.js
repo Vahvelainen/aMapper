@@ -26,7 +26,17 @@ function setOutput(output, docs) {
 
 function splitDocs(data, splitter) {
   const docs = data.toLowerCase().split(splitter); 
-  return docs;
+  return docs.filter(function (el) { //filter empty ones out
+    return el != '';
+  });
+}
+
+function splitWords(data, splitter) {
+  const word_seq = replaceAll(data.toLowerCase(), splitter, ' ').split(' ');
+  const words = [...new Set(word_seq)]; //remove duplicates
+  return words.filter(function (el) { //filter empty ones out
+    return el != '';
+  });
 }
 
 function findNearestPair(data) {
@@ -34,7 +44,9 @@ function findNearestPair(data) {
   let minDist = Infinity;
   let minIx = -1;
   let minIy = -1;
+  let distMat = [];
   for (let x = 0; x < N; x++) {
+    let distVer = [];
     for (let y = 0; y < N; y++) {
       const dist = manhattanDist(data[x], data[y]);
       if (dist < minDist) {
@@ -42,7 +54,9 @@ function findNearestPair(data) {
         minIx = x;
         minIy = y;
       }
+      distVer.push(dist);
     }
+    distMat.push(distVer);
   }
   return [minIx, minIy];
 }
@@ -62,12 +76,6 @@ function manhattanDist(a, b) {
 function sqrEuclideanDist(a, b) {
   //euclidinen etäisyys funkkari tänne
   return 0;
-}
-
-function splitWords(data, splitter) {
-  const word_seq = replaceAll(data.toLowerCase(), splitter, ' ').split(' ');
-  const words = [...new Set(word_seq)]; //remove duplicates
-  return words;
 }
 
 function tfIdf(words, docs) {
