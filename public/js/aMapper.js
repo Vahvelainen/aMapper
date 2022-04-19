@@ -100,7 +100,7 @@ function sqrEuclideanDist(a, b) {
   return d;
 }
 
-function KMeans(data, K) {
+function KMeans(data, K) { //make this into own file for gods sake
   const N = data.length;
   const V = data[0].length;
 
@@ -126,6 +126,7 @@ function KMeans(data, K) {
       clusters.push([]);
     }
 
+    //assign each vector to a nearest center by pushing its index to the cluster
     for (const docI in data) {
       const doc = data[docI];
       let minDist = Infinity;
@@ -140,24 +141,33 @@ function KMeans(data, K) {
       }
       clusters[minI].push(docI);
     }
+
+    //there is in some cases empty clusters
+    //it maybe shoud be assigned a new random coordinate from data
+    //this will lead to great confusion if amoutn of clusters is too high
+    //program can auto reduce amount of clusters if this happens
+    //empty clusters seem to be because of too little clusters for the data (unintuivitely)
+    //program could then add one kluster more
   
     //console.log(centers);
     //calculate new centers
     let new_centers = [];
     clusters.forEach(function(cluster) {
       let center = [];
-      //go trough each axis of the vectors
-      for (let axis = 0; axis < V; axis++) {
-        let loc = 0.;
-        cluster.forEach(function(doc){
-          loc += data[doc][axis];
-        });
-        //the average of coordinates should be fine right?
-        center.push( loc / cluster.length ); 
+      if (cluster.length > 0) {
+        for (let axis = 0; axis < V; axis++) {
+          let loc = 0.;
+          cluster.forEach(function(doc){
+            loc += data[doc][axis];
+          });
+          //the average of coordinates should be fine right?
+          center.push( loc / cluster.length ); 
+        }
       }
+      //go trough each axis of the vectors
       new_centers.push(center);
     });
-    //console.log(new_centers);
+
     console.log('iterate!')
 
     //count total distance between old and new centers
@@ -170,6 +180,14 @@ function KMeans(data, K) {
     if ( cenDistances == 0 ) { 
       centers_moved = false;
       console.log('made it!!!')
+    }
+
+    //only allows 102 iteration before giving up
+    //should not happen but baetter safe than sorry
+    if ( iteration_count > 100 ) { 
+      centers_moved = false;
+      console.log('an iteration got stuck and had to stop')
+      console.log('center distance: ' + cenDistances)
     }
     
     iteration_count ++;
