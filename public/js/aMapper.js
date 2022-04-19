@@ -9,9 +9,11 @@ function sendData() {
   const data = $('#aMapper-input-data')[0].value;
   const splitter = '\n'; //only linebreaks for starter
   const words = splitWords(data, splitter);
+  console.log('Individual words: ' + words.length);
   const docs = splitDocs(data, splitter);
+  console.log('Documents: ' + docs.length);
   const TF_IDF = tfIdf(words, docs);
-  const clusters = KMeans(TF_IDF, 3);
+  const clusters = KMeans(TF_IDF, 3, 10);
   //findNearestPair(TF_IDF); //using this to log ditance mtrix to validate results a bit
   //KMEans does't quarentee best results so no worries if doesnt match nearest neighbours
   setOutput(clusters, docs);
