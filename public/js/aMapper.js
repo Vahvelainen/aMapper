@@ -89,7 +89,7 @@ export function manhattanDist(a, b) {
   return d;
 }
 
-function sqrEuclideanDist(a, b) {
+export function sqrEuclideanDist(a, b) {
   //euclidinen etäisyys funkkari tänne
   if (a == b) {
     return Infinity;
