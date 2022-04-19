@@ -1,4 +1,5 @@
 import { KMeans } from './KMeans.js'
+import { TF_IDF } from './TF-IDF.js'
 
 $('#aMapper-submit')[0].addEventListener("click", function(event){
   event.preventDefault();
@@ -12,10 +13,8 @@ function sendData() {
   console.log('Individual words: ' + words.length);
   const docs = splitDocs(data, splitter);
   console.log('Documents: ' + docs.length);
-  const TF_IDF = tfIdf(words, docs);
-  const clusters = KMeans(TF_IDF, 3, 10);
-  //findNearestPair(TF_IDF); //using this to log ditance mtrix to validate results a bit
-  //KMEans does't quarentee best results so no worries if doesnt match nearest neighbours
+  const tf_idf = TF_IDF(words, docs);
+  const clusters = KMeans(tf_idf, 7, 10);
   setOutput(clusters, docs);
 }
 
@@ -39,7 +38,6 @@ function setOutput(output, docs) {
 
 function splitDocs(data, splitter) {
   const docs = data.toLowerCase().split(splitter); 
-  //pitäis jättää 
   return docs.filter(function (el) { //filter empty ones out
     return el != '';
   });
@@ -103,53 +101,6 @@ export function sqrEuclideanDist(a, b) {
   return d;
 }
 
-function tfIdf(words, docs) {
-  //TF-IDF vecktor calculation
-
-  //Go over each unique word and calculate its document frequency
-  let docFs = []; //taulukon pituudeksi tulee sama ku sanoilla
-  words.forEach(function(word){
-    let docF = 0;
-    docs.forEach(function(doc){
-      const docArr = doc.split(' '); //If it works, dont optimize it
-      if (countOccurrences(docArr, word)) {
-        docF ++;
-      }
-    });
-    docFs.push( docF / docs.length);
-  });
-
-  //Go trough each doc and each word to calculate its term frequency, and its TF-IDF representation
-  let termFs = []; //term frequesnsies for debugging
-  let tf_idf = [];
-  docs.forEach(function(doc){
-    const docArr = doc.split(' ');
-    let termF = [];
-    let tf_idf_vector = [];
-    for (const i in words) {
-      const word = words[i];
-      const freq = countOccurrences(docArr, word) / docArr.length;
-      termF.push(freq);
-      const rep = freq * Math.log10(1 / docFs[i]);
-      tf_idf_vector.push(rep);
-    }
-    termFs.push(termF);
-    tf_idf.push(tf_idf_vector);
-  });
-
-  return tf_idf;
-}
-
 function replaceAll(str, find, replace) {
   return str.replace(new RegExp(find, 'g'), replace);
-}
-
-function countOccurrences(arr, find) {
-  let counts = 0;
-  arr.forEach(function(elem){
-    if (elem == find) {
-      counts ++;
-    }
-  });
-  return counts;
 }
