@@ -14,26 +14,40 @@ function sendData() {
   const docs = splitDocs(data, splitter);
   console.log('Documents: ' + docs.length);
   const tf_idf = TF_IDF(words, docs);
-  const clusters = KMeans(tf_idf, 7, 10);
-  setOutput(clusters, docs);
+  const K = $('#aMapper-input-K')[0].value;
+  const clusters = KMeans(tf_idf, K, 10);
+  setOutput(clusters, docs, tf_idf, words);
 }
 
-function setOutput(output, docs) {
+function setOutput(output, docs, tf_idf, words) {
   const outElem = $('#aMapper-output')[0];
   outElem.innerHTML = '';
-  output.forEach(function(group){
+  for (const i in output) {
+    const group = output[i];
     const article = document.createElement("article");
-    const heading = document.createElement("h4");
-    heading.innerHTML = 'Group: ' + group; //yeah, this could be better but works for now
+    const heading = document.createElement("h3");
+
+    let key_words = [];
+    group.forEach(function(document_id) {
+      const arr = tf_idf[document_id];
+      const best_word = words[ arr.indexOf( Math.max( ...arr ) ) ];
+      const str = ' '.concat(best_word);
+      key_words.push(str);
+    });
+
+    heading.innerHTML =  'Group: ' + key_words.slice(0, 2);
     article.append(heading);
+
     group.forEach(function(index){
       //some day write index here aswell
+      const number = document.createElement("h4");
+      number.innerHTML = index;
       const p = document.createElement("p");
       p.innerHTML = docs[index];
-      article.append(p);
+      article.append(number, p);
     })
     outElem.append(article);
-  });
+  }
 }
 
 function splitDocs(data, splitter) {
