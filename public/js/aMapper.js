@@ -132,6 +132,26 @@ function KMeans(data, K) {
     }
     clusters[minI].push(docI);
   }
+
+  console.log(centers);
+  //calculate new centers
+  let new_centers = [];
+  clusters.forEach(function(cluster) {
+    let center = [];
+    //go trough each axis of the vectors
+    for (let axis = 0; axis < V; axis++) {
+      let loc = 0.;
+      cluster.forEach(function(doc){
+        loc += data[doc][axis];
+      });
+      //the average of coordinates should be fine right?
+      center.push( loc / cluster.length ); 
+    }
+    new_centers.push(center);
+  });
+  console.log(new_centers);
+
+  console.log(clusters);
   //palautus muotoa [[custerin indeksit järjestyksessä etäisyys keskustasta], seuraava clusteri...]
   //aka clusters (ei oo sortattu vielä)
   return clusters;
