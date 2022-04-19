@@ -11,6 +11,8 @@ function sendData() {
   const docs = splitDocs(data, splitter);
   const TF_IDF = tfIdf(words, docs);
   const clusters = KMeans(TF_IDF, 3);
+  //findNearestPair(TF_IDF); //using this to log ditance mtrix to validate results a bit
+  //KMEans does't quarentee best results so no worries if doesnt match nearest neighbours
   setOutput(clusters, docs);
 }
 
@@ -70,6 +72,7 @@ function findNearestPair(data) {
   }
   //Made to be compatible with clusters functions
   //thats why double brackets []
+  console.log(distMat);
   return [[minIx, minIy]];
 }
 
@@ -102,56 +105,78 @@ function KMeans(data, K) {
   const V = data[0].length;
 
   //create random centers
-
   //create array with the data vectors random order to pick centers from
   const rndData = data.slice(0).sort(function() { 
     return 0.5 - Math.random();
   });
   //pick K number of document vectors to be centers
   let centers = rndData.slice(N-K);
-
-  //initiate clusters
+  
   let clusters = [];
-  for (const center in centers) {
-    clusters.push([]);
-  }
-
   //put document indexes into nearest clusters
   //will iterate in future
-  for (const docI in data) {
-    const doc = data[docI];
-    let minDist = Infinity;
-    let minI = -1;
-    for (const centI in centers) {
-      const center = centers[centI];
-      const dist = manhattanDist(doc, center);
-      if (dist < minDist) {
-        minDist = dist;
-        minI = centI
-      }
+  let centers_moved = true;
+  let old_centers = centers; //for debuggin
+  let penultimate_centers = []; //for debuggin
+  let iteration_count = 0; //for debugging
+  while (centers_moved) {
+    //initiate clusters
+    clusters = [];
+    for (const center in centers) {
+      clusters.push([]);
     }
-    clusters[minI].push(docI);
+
+    for (const docI in data) {
+      const doc = data[docI];
+      let minDist = Infinity;
+      let minI = -1;
+      for (const centI in centers) {
+        const center = centers[centI];
+        const dist = manhattanDist(doc, center);
+        if (dist < minDist) {
+          minDist = dist;
+          minI = centI
+        }
+      }
+      clusters[minI].push(docI);
+    }
+  
+    //console.log(centers);
+    //calculate new centers
+    let new_centers = [];
+    clusters.forEach(function(cluster) {
+      let center = [];
+      //go trough each axis of the vectors
+      for (let axis = 0; axis < V; axis++) {
+        let loc = 0.;
+        cluster.forEach(function(doc){
+          loc += data[doc][axis];
+        });
+        //the average of coordinates should be fine right?
+        center.push( loc / cluster.length ); 
+      }
+      new_centers.push(center);
+    });
+    //console.log(new_centers);
+    console.log('iterate!')
+
+    //count total distance between old and new centers
+    let cenDistances = 0;
+    for ( const i in centers) {
+      const dist = manhattanDist(centers[i], new_centers[i]);
+      cenDistances += dist;
+    }
+    
+    if ( cenDistances == 0 ) { 
+      centers_moved = false;
+      console.log('made it!!!')
+    }
+    
+    iteration_count ++;
+    penultimate_centers = centers;
+    centers = new_centers;
   }
 
-  console.log(centers);
-  //calculate new centers
-  let new_centers = [];
-  clusters.forEach(function(cluster) {
-    let center = [];
-    //go trough each axis of the vectors
-    for (let axis = 0; axis < V; axis++) {
-      let loc = 0.;
-      cluster.forEach(function(doc){
-        loc += data[doc][axis];
-      });
-      //the average of coordinates should be fine right?
-      center.push( loc / cluster.length ); 
-    }
-    new_centers.push(center);
-  });
-  console.log(new_centers);
-
-  console.log(clusters);
   //palautus muotoa [[custerin indeksit järjestyksessä etäisyys keskustasta], seuraava clusteri...]
   //aka clusters (ei oo sortattu vielä)
   return clusters;
