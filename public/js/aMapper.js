@@ -66,15 +66,21 @@ function setOutput(output, docs, tf_idf, words) {
     const heading = document.createElement("h3");
 
     //separate thizz
-    let key_words = [];
-    group.forEach(function(document_id) {
-      const arr = tf_idf[document_id];
-      const best_word = words[ arr.indexOf( Math.max( ...arr ) ) ];
-      const str = ' '.concat(best_word);
-      key_words.push(str);
-    });
-
-    heading.innerHTML =  'Group: ' + key_words.slice(0, 2);
+    let best_wscore = 0;
+    let best_w_i = -1;
+    let secondbest_w_i = -1;
+    for (const word_index in words) {
+      let word_score = 0;
+      group.forEach(function(document_id) {
+        word_score += tf_idf[document_id][word_index];
+      });
+      if (word_score > best_wscore) {
+        best_wscore = word_score;
+        secondbest_w_i = best_w_i;
+        best_w_i = word_index;
+      }
+    }
+    heading.innerHTML =  'Group: ' + words[best_w_i] + ' ' + words[secondbest_w_i];
     article.append(heading);
 
     group.forEach(function(index){
