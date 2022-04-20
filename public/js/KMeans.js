@@ -1,6 +1,3 @@
-import { manhattanDist, sqrEuclideanDist } from './aMapper.js' //thiis. could still be better
-
-
 export function KMeans(data, K, trackCount = 10) { 
   //Empty cluster occurs only anyore when K is too big for the data, which is good
   let bestClusters = [];
@@ -141,4 +138,53 @@ function sumOfDistances(a, b) {
     distSum += dist;
   }
   return distSum;
+}
+
+export function manhattanDist(a, b) {
+  if (a == b) {
+    return 0;
+  }
+
+  let d = 0;
+  for (const i in a) {
+    d += Math.abs( a[i] - b[i] )
+  }
+  return d;
+}
+
+export function sqrEuclideanDist(a, b) {
+  if (a == b) {
+    return Infinity;
+  }
+  let d = 0;
+  for (const i in a) {
+    d += Math.abs( a[i] - b[i] )**2
+  }
+  return d;
+}
+
+//Unnecesary but good for debugging
+function findNearestPair(data) {
+  const N = data.length;
+  let minDist = Infinity;
+  let minIx = -1;
+  let minIy = -1;
+  let distMat = [];
+  for (let x = 0; x < N; x++) {
+    let distVer = [];
+    for (let y = 0; y < N; y++) {
+      const dist = manhattanDist(data[x], data[y]);
+      if (dist < minDist && dist != 0) { //dublicates doesnt count as neighbors
+        minDist = dist;
+        minIx = x;
+        minIy = y;
+      }
+      distVer.push(dist);
+    }
+    distMat.push(distVer);
+  }
+  //Made to be compatible with clusters functions
+  //thats why double brackets []
+  console.log(distMat);
+  return [[minIx, minIy]];
 }
