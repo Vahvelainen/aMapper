@@ -10,5 +10,6 @@ Returning documents as they were, Done!
 writing out each documents distance from cluster centroid, this can be used to visually represent "heat" or revelevance of each doc, Done! but seems to be a little useless for now 0-2 green 2-3 orange 3-5 red (5 very very red)
 
 letting user choose the data splitter from options
+Done! Also refactored splitting and flitering functions a little
 
 maybe: TF-IDF and KMeans to objects

@@ -6,17 +6,29 @@ $('#aMapper-submit')[0].addEventListener("click", function(event){
   sendData();
 });
 
+const splitters = [
+  '\n',
+  '.',
+  ',',
+  ':',
+  ';'
+];
+
 function sendData() {
   const data = $('#aMapper-input-data')[0].value;
-  const splitter = '\n'; //only linebreaks for starter
-  const words = splitWords(data, splitter);
-  console.log('Individual words: ' + words.length);
+  const splitter = splitters[ $('#aMapper-input-separator')[0].value ];
+  const K = $('#aMapper-input-K')[0].value;
+
   const og_docs = splitDocs(data, splitter);
   const docs = removeSpecialsFromArray(og_docs);
+  const words = splitWordsFromDocs(docs, splitter);
+  
   console.log('Documents: ' + docs.length);
+  console.log('Individual words: ' + words.length);
+  
   const tf_idf = TF_IDF(words, docs);
-  const K = $('#aMapper-input-K')[0].value;
   const clusters = KMeans(tf_idf, K, 10);
+
   setOutput(clusters, og_docs, tf_idf, words);
 }
 
@@ -61,30 +73,39 @@ function setOutput(output, docs, tf_idf, words) {
 }
 
 function splitDocs(data, splitter) {
-  const docs = data.split(splitter);
-  return removeEmptyFromArray(docs);
+  const docs = replaceAll(data, '\n', '\n ').split(splitter);
+  return removeNonWordsFromArray(docs);
 }
 
-function splitWords(data, splitter) {
-  const word_seq = replaceAll(data, splitter, ' ').split(' ');
+function splitWordsFromDocs(docs, splitter) {
+  let word_seq = [];
+  docs.forEach(function(doc) {
+    const doc_words = replaceAll(doc, splitter, ' ').split(' ');
+    word_seq = word_seq.concat(doc_words);
+  });
+  word_seq = removeSpecialsFromArray(word_seq);
   const words = [...new Set(word_seq)]; //remove duplicates
-  return removeSpecialsFromArray(words);
+  return words;
 }
 
 function removeSpecialsFromArray(arr) {
   //also lower capitals
   let new_arr = [];
   arr.forEach(function(item){
-    const new_item = item.replace(/[^A-ZÅÄÖa-zåäö ]/g, '');
-    new_arr.push(new_item.toLowerCase());
+    new_arr.push(removeSpecialsAndLower(item));
   });
-  return removeEmptyFromArray(new_arr);
+  return removeNonWordsFromArray(new_arr);
 }
 
-function removeEmptyFromArray(arr) {
+function removeNonWordsFromArray(arr) {
   return arr.filter(function (item) {
-    return item != '';
+    return replaceAll(removeSpecialsAndLower(item), ' ', '') != '';
   });
+}
+
+function removeSpecialsAndLower(str) {
+  const new_srt = str.replace(/[^A-ZÅÄÖa-zåäö ]/g, '');
+  return new_srt.toLowerCase();
 }
 
 //Unnecesary but good for debugging
@@ -138,5 +159,12 @@ export function sqrEuclideanDist(a, b) {
 }
 
 function replaceAll(str, find, replace) {
-  return str.replace(new RegExp(find, 'g'), replace);
+  //not my finest but works enough for now
+  if (find.match[/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/] ) {
+    //not a special chracter
+    return str.replace(new RegExp(find, 'g'), replace);
+  } else {
+    //is a special character
+    return str.replace(new RegExp(find + '\-', 'g'), replace);
+  }
 }
