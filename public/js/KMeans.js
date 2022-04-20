@@ -113,7 +113,7 @@ function mapToCenters(data, centers) {
   return [clusters, distTotal];
 }
 
-function centroidsByIndexes(data, clusters) {
+export function centroidsByIndexes(data, clusters) {
   const V = data[0].length;
   let centroids = [];
   clusters.forEach(function(cluster) {

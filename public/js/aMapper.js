@@ -1,4 +1,4 @@
-import { KMeans } from './KMeans.js'
+import { KMeans, centroidsByIndexes } from './KMeans.js'
 import { TF_IDF } from './TF-IDF.js'
 
 $('#aMapper-submit')[0].addEventListener("click", function(event){
@@ -11,22 +11,27 @@ function sendData() {
   const splitter = '\n'; //only linebreaks for starter
   const words = splitWords(data, splitter);
   console.log('Individual words: ' + words.length);
-  const docs = splitDocs(data, splitter);
+  const og_docs = splitDocs(data, splitter);
+  const docs = removeSpecialsFromArray(og_docs);
   console.log('Documents: ' + docs.length);
   const tf_idf = TF_IDF(words, docs);
   const K = $('#aMapper-input-K')[0].value;
   const clusters = KMeans(tf_idf, K, 10);
-  setOutput(clusters, docs, tf_idf, words);
+  setOutput(clusters, og_docs, tf_idf, words);
 }
 
 function setOutput(output, docs, tf_idf, words) {
   const outElem = $('#aMapper-output')[0];
   outElem.innerHTML = '';
+
+  const centroids = centroidsByIndexes(tf_idf, output);
+
   for (const i in output) {
     const group = output[i];
     const article = document.createElement("article");
     const heading = document.createElement("h3");
 
+    //separate thizz
     let key_words = [];
     group.forEach(function(document_id) {
       const arr = tf_idf[document_id];
@@ -45,23 +50,40 @@ function setOutput(output, docs, tf_idf, words) {
       const p = document.createElement("p");
       p.innerHTML = docs[index];
       article.append(number, p);
+
+      //separate thizz also
+      const dist_p = document.createElement("p");
+      dist_p.innerHTML = 'Distance: '+ manhattanDist(centroids[i], tf_idf[index]);
+      article.append(dist_p);
     })
     outElem.append(article);
   }
 }
 
 function splitDocs(data, splitter) {
-  const docs = data.toLowerCase().split(splitter); 
-  return docs.filter(function (el) { //filter empty ones out
-    return el != '';
-  });
+  const docs = data.split(splitter);
+  return removeEmptyFromArray(docs);
 }
 
 function splitWords(data, splitter) {
-  const word_seq = replaceAll(data.toLowerCase(), splitter, ' ').split(' ');
+  const word_seq = replaceAll(data, splitter, ' ').split(' ');
   const words = [...new Set(word_seq)]; //remove duplicates
-  return words.filter(function (el) { //filter empty ones out
-    return el != '';
+  return removeSpecialsFromArray(words);
+}
+
+function removeSpecialsFromArray(arr) {
+  //also lower capitals
+  let new_arr = [];
+  arr.forEach(function(item){
+    const new_item = item.replace(/[^A-ZÅÄÖa-zåäö ]/g, '');
+    new_arr.push(new_item.toLowerCase());
+  });
+  return removeEmptyFromArray(new_arr);
+}
+
+function removeEmptyFromArray(arr) {
+  return arr.filter(function (item) {
+    return item != '';
   });
 }
 
