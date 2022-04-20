@@ -1,0 +1,45 @@
+@import 'frontpage';
+@import 'nav';
+@import 'footer';
+
+body {
+  margin: 0;
+  font-family: Helvetica, Arial;
+  font-size: 16px;
+  min-height: 100%;
+  line-height: 1.5;
+  font-weight: 500;
+  background-color: #91e6ff;
+}
+
+main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 4em 2em 2em;
+  border-radius: 1em;
+  background-color: #f8ffef;;
+  min-height: 60vh;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: monospace;
+  font-weight: 700;
+}
+
+p, h1, h2, h3, h4, h5 {
+  max-width: 400px;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+a {
+  color: #009579;
+}
+
+@media all and (max-width: 1400px) {
+  section {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+}

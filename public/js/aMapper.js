@@ -33,7 +33,8 @@ function sendData() {
   const tf_idf = TF_IDF(words, docs);
 
   //KMeans.js
-  const clusters = KMeans(tf_idf, K, 10);
+  let clusters = KMeans(tf_idf, K, 10);
+  clusters = sortByLength(clusters);
 
   setOutput(clusters, og_docs, tf_idf, words);
 }
@@ -77,3 +78,10 @@ function setOutput(output, docs, tf_idf, words) {
     outElem.append(article);
   }
 }
+
+function sortByLength(arr) {
+  arr.sort(function(a, b) { 
+    return a.length - b.length;
+  });
+  return arr;
+} 
