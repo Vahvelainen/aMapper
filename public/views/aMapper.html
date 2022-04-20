@@ -3,23 +3,38 @@
   <form id='aMapper-input'>
   
     <textarea id='aMapper-input-data' placeholder="Put your raw data here..."></textarea>
-    <p>Amount of clusters </p>
-    <input type='number' value='3' min='1' id="aMapper-input-K">
-  
-    <p>Choose seprator</p>
-    <select name="Separator" id="aMapper-input-separator">
-      <option value="0">Line break '\n'</option>
-      <option value="1">Dot ' . '</option>
-      <option value="2">Comma ' , '</option>
-      <option value="3">Colon ' : '</option>
-      <option value="4">Semicolon ' ; '</option>
-    </select>
-  
-      <button id='aMapper-submit'>
-        <h4>
-          Map!
-        </h4>
-      </button>
+    
+    <div class="parameter">
+      <lable>Amount of clusters </label>
+      <input type='number' value='3' min='1' id="aMapper-input-K">
+    </div>
+
+    <div class="parameter">
+      <label>Document seprator</label>
+      <select name="Separator" id="aMapper-input-separator">
+        <option value="0">Line break '\n'</option>
+        <option value="1">Dot ' . '</option>
+        <option value="2">Comma ' , '</option>
+        <option value="3">Colon ' : '</option>
+        <option value="4">Semicolon ' ; '</option>
+      </select>
+    </div>
+    
+    <div class="parameter">
+      <label>Words:</label>
+      <var id='aMapper-word-count'>0</var>      
+    </div>
+
+    <div class="parameter">
+      <label>Documents:</label>
+      <var id="aMapper-document-count">0</var>
+    </div>
+    
+    <button id='aMapper-submit'>
+      <h4>
+        Map!
+      </h4>
+    </button>
   </form>
 </div>
 

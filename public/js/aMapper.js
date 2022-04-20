@@ -2,11 +2,6 @@ import { splitAndFilterDocs, splitAndFilterWordsFromDocs, lowerAndRemoveSpecials
 import { TF_IDF } from './TF-IDF.js'
 import { KMeans, centroidsByIndexes, manhattanDist } from './KMeans.js'
 
-$('#aMapper-submit')[0].addEventListener("click", function(event){
-  event.preventDefault();
-  sendData();
-});
-
 const splitters = [
   '\n',
   '.',
@@ -14,6 +9,29 @@ const splitters = [
   ':',
   ';'
 ];
+
+$('#aMapper-input-data')[0].addEventListener("change", function(event){
+  updateWordAndDocumentCount();
+});
+$('#aMapper-input-separator')[0].addEventListener("change", function(event){
+  updateWordAndDocumentCount();
+});
+
+function updateWordAndDocumentCount() {
+  //not DRY
+  const data = $('#aMapper-input-data')[0].value;
+  const splitter = splitters[ $('#aMapper-input-separator')[0].value ];
+  const docs = splitAndFilterDocs(data, splitter);
+  const words = splitAndFilterWordsFromDocs(docs, splitter);
+  
+  $('#aMapper-word-count')[0].innerHTML = words.length;
+  $('#aMapper-document-count')[0].innerHTML = docs.length;
+}
+
+$('#aMapper-submit')[0].addEventListener("click", function(event){
+  event.preventDefault();
+  sendData();
+});
 
 function sendData() {
   //Read from inputs
@@ -25,9 +43,6 @@ function sendData() {
   const og_docs = splitAndFilterDocs(data, splitter);
   const docs = lowerAndRemoveSpecialsFromArray(og_docs);
   const words = splitAndFilterWordsFromDocs(docs, splitter);
-  
-  console.log('Documents: ' + docs.length);
-  console.log('Individual words: ' + words.length);
   
   //TF-IDF.js
   const tf_idf = TF_IDF(words, docs);

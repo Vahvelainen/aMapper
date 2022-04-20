@@ -12,6 +12,11 @@
       textarea, input, select{
         border: solid 1px lightgray;
       }
+      .parameter {
+        display: inline-block;
+        margin-right: 1em;
+        margin-bottom: 1em;
+      }
       input, select {
         height: 1.5em;
         width: 4em;
