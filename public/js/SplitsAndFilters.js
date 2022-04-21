@@ -24,12 +24,13 @@ export function lowerAndRemoveSpecialsFromArray(arr) {
 
 function removeNonWordsFromArray(arr) {
   return arr.filter(function (item) {
-    return replaceAll(lowerAndremoveSpecials(item), ' ', '') != '';
+    const fltrdItem = replaceAll(lowerAndremoveSpecials(item), ' ', '')
+    return fltrdItem.length > 1;
   });
 }
 
 function lowerAndremoveSpecials(str) {
-  const new_srt = str.replace(/[^A-ZÅÄÖa-zåäö ]/g, '');
+  const new_srt = str.replace(/[^A-ZÅÄÖa-zåäö ]/g, ' ');
   return new_srt.toLowerCase();
 }
 
