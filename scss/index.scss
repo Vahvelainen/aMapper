@@ -9,17 +9,19 @@ body {
   min-height: 100%;
   line-height: 1.5;
   font-weight: 500;
-  background-color: #91e6ff;
+  background-color: #dffffb;
 }
 
 main {
+  border: solid 1px rgb(225 225 225 / 80%);
   max-width: 1400px;
   margin: 0 auto;
   padding: 4em 2em 2em;
   border-radius: 1em;
-  background-color: #f8ffef;;
+  background-color: #fffdf4;
   min-height: 60vh;
   overflow: hidden;
+  box-shadow: 5px 10px 30px #afabab3d;
 }
 
 h1, h2, h3, h4, h5 {
