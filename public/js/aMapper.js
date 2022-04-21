@@ -1,6 +1,6 @@
 import { splitAndFilterDocs, splitAndFilterWordsFromDocs, lowerAndRemoveSpecialsFromArray } from './SplitsAndFilters.js'
 import { TF_IDF } from './TF-IDF.js'
-import { KMeans, centroidsByIndexes, manhattanDist } from './KMeans.js'
+import { KMeans, centroidsByIndexes, normalizedCentroidsByIndexes, manhattanDist } from './KMeans.js'
 
 const splitters = [
   '\n',
@@ -34,6 +34,8 @@ $('#aMapper-submit')[0].addEventListener("click", function(event){
 });
 
 function sendData() {
+  ///TESTIND ZONE
+
   //Read from inputs
   const data = $('#aMapper-input-data')[0].value;
   const splitter = splitters[ $('#aMapper-input-separator')[0].value ];
@@ -50,6 +52,11 @@ function sendData() {
   //KMeans.js
   let clusters = KMeans(tf_idf, K, 10);
   clusters = sortByLength(clusters);
+
+  //should be wild
+  console.log(centroidsByIndexes(tf_idf, clusters));
+  //should be only between 0 and one
+  console.log(normalizedCentroidsByIndexes(tf_idf, clusters));
 
   setOutput(clusters, og_docs, tf_idf, words);
 }
