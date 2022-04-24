@@ -1,9 +1,11 @@
 import Frontpage from './views/Frontpage.js';
+import Visualization from './views/visualization.js';
 //import './aMapper.js';
 
 const router = async () => {
   const routes = [
-    { path: '/', view: Frontpage }
+    { path: '/', view: Frontpage },
+    { path: '/vs', view: Visualization }
   ];
   
   // Test each route for potential match
