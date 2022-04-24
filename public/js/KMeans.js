@@ -1,3 +1,8 @@
+//Refacturointi idiksii:
+//Vittuun handlaaminen erikseen indeksiclustereiden kanssa, jos vectoreiden avulla voidaan myhöemmin löytää indeksit
+//Yhden keskipisteen laskenta omaan funkkariin
+
+
 export function KMeans(data, K, trackCount = 10) { 
   //Empty cluster occurs only anyore when K is too big for the data, which is good
   let bestClusters = [];
