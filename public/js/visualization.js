@@ -2,14 +2,19 @@
 const div = $('.visualization-box')[0];
 
 let vectors = [];
-vectors = makeRandomVectors(1, 2);
+vectors = makeRandomVectors(3, 12);
 drawDots(vectors, div);
 
-const center = normalizedCentroid(vectors);
+const center = centroid(vectors);
 drawDot(center, div, 'red');
+
+const newCenter = normalizedCentroid(vectors);
+drawDot(newCenter, div, 'black');
 
 const otherCenter = newNormalizedCentroid(vectors);
 drawDot(otherCenter, div, 'green');
+
+console.log(otherCenter);
 
 //why cant I just use normal distance since it already gives the direction?
 //according to internet, the fucker needs to be "on the arch"
@@ -47,29 +52,71 @@ function drawDot(vector, elem, color = 'blue') {
   elem.append( dot );
 }
 
+export function otherNewNormalizedCentroid(cluster) {
+  //same results as og normalizedCentroid
+
+  const V = cluster[0].length;  
+
+  let centroid = [];
+  //go trough each axis
+  for (let axis = 0; axis < V; axis++) {
+    //calculate range of axis here
+
+    // take one axis of the cluster and calculate the range from data???
+    //let data_axis = data.map(function(row) { return row[axis]; });
+    let data_cluster_axis = [];
+    cluster.forEach(function(vector){ 
+      data_cluster_axis.push( vector[axis] );
+    });
+
+    //console.log(data_cluster_axis); //yaass
+    const axis_max = Math.max(...data_cluster_axis);
+    const axis_min = Math.min(...data_cluster_axis); //min is for almostsure going to be zero
+    const axis_range = axis_max - axis_min;
+
+    //Calculate average of each dimension
+    let loc = 0.;
+    if (axis_range > 0) { //protects from NaN
+      cluster.forEach(function(vector){
+        //This is what we need to normalize between zero and one
+        const doc_loc = vector[axis];
+        loc += doc_loc;
+      });
+    }
+    //the average of coordinates
+    const avg = loc / cluster.length;
+    const norm_avg = (avg - axis_min) / axis_range;
+
+    centroid.push( norm_avg ); 
+  } //axis
+
+  return centroid;
+}
+
 export function newNormalizedCentroid(cluster) {
   //Now I'm turning towards normalizing the vectors by themselves instead of by cluster
 
   //This one hops to 100% to the side where the balance sis tilting
+  //mayybe this is the one?
 
   const V = cluster[0].length;  
-  let centroid = [ 0 , 0 ]; //this wont hold up in action
+  let centroid = [];
+  for (let axis = 0; axis < V; axis++) {
+    centroid.push(0);
+  }
+
 
   //go trough each axis
   cluster.forEach( vector => {
     const max = Math.max(...vector);
     const min = Math.min(...vector);
-    console.log(min); //works
     const range = max - min;
-    console.log(range); //works
 
     //go trough each axis
     for (const axis in centroid) {
       const loc = vector[axis];
-      console.log(loc); //works
-      const norm_loc = (loc - min) / range; //now theres your problem
+      const norm_loc = (loc - min) / range; 
       //in 2D reducing the min actually DOES end up in 0 or 1
-      console.log(norm_loc); //shit
       centroid[axis] += norm_loc;
     }
   });
