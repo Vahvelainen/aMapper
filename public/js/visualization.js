@@ -2,7 +2,7 @@
 const div = $('.visualization-box')[0];
 
 let vectors = [];
-vectors = makeRandomVectors(3, 12);
+vectors = makeRandomVectors(2, 2);
 drawDots(vectors, div);
 
 const center = centroid(vectors);
@@ -94,28 +94,22 @@ export function otherNewNormalizedCentroid(cluster) {
 }
 
 export function newNormalizedCentroid(cluster) {
-  //Now I'm turning towards normalizing the vectors by themselves instead of by cluster
-
-  //This one hops to 100% to the side where the balance sis tilting
-  //mayybe this is the one?
-
   const V = cluster[0].length;  
   let centroid = [];
   for (let axis = 0; axis < V; axis++) {
     centroid.push(0);
   }
 
-
   //go trough each axis
   cluster.forEach( vector => {
     const max = Math.max(...vector);
-    const min = Math.min(...vector);
-    const range = max - min;
+    //const min = Math.min(...vector);
+    //const range = max - min;
 
     //go trough each axis
     for (const axis in centroid) {
       const loc = vector[axis];
-      const norm_loc = (loc - min) / range; 
+      const norm_loc = loc / max; 
       //in 2D reducing the min actually DOES end up in 0 or 1
       centroid[axis] += norm_loc;
     }
