@@ -35,28 +35,28 @@ function sendData() {
   const words = splitAndFilterWordsFromDocs(docs, splitter);
   
   //TF-IDF.js
-  const tf_idf = TF_IDF(words, docs);
+  const tf_idf = TF_IDF(words, docs); //takes most amount of time with large quantitites
   
   //KMeans.js
   let raw_clusters = KMeans(tf_idf, K, 10);
   raw_clusters = sortByLength(raw_clusters);
   let clusters = findClusterIndexes(tf_idf, raw_clusters);
   
-  setOutput(clusters, og_docs, tf_idf, words);
+  setOutput(clusters, og_docs, tf_idf, words, raw_clusters);
 }
 
-function setOutput(output, docs, tf_idf, words) {
+function setOutput(output, docs, tf_idf, words, raw_clusters) {
   const outElem = $('#aMapper-output')[0];
   outElem.innerHTML = '';
   
-  //const centroids = normalizedCentroidsByIndexes(tf_idf, output);
+  const centroids = normalizedCentroids(raw_clusters);
   
   for (const i in output) {
     const group = output[i];
     const article = document.createElement("article");
     const heading = document.createElement("h3");
     
-    /*
+    
     //separate thizz
     let best_wscore = 0;
     let best_w_i = -1;
@@ -74,7 +74,7 @@ function setOutput(output, docs, tf_idf, words) {
     }
     heading.innerHTML =  'Group: ' + words[best_w_i] + ' ' + words[secondbest_w_i];
     article.append(heading);
-    */
+    
    
    group.forEach(function(index){
      const number = document.createElement("h4");
@@ -83,12 +83,12 @@ function setOutput(output, docs, tf_idf, words) {
      p.innerHTML = docs[index];
      article.append(number, p);
      
-     /*
+     
      //separate thizz also
      const dist_p = document.createElement("p");
      dist_p.innerHTML = 'Distance: '+ cosineDiff(centroids[i], tf_idf[index]);
      article.append(dist_p);
-     */
+     
     });
     outElem.append(article);
   }
