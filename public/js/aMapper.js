@@ -1,6 +1,6 @@
 import { splitAndFilterDocs, splitAndFilterWordsFromDocs, lowerAndRemoveSpecialsFromArray } from './SplitsAndFilters.js'
 import { TF_IDF } from './TF-IDF.js'
-import { KMeans, centroidsByIndexes, normalizedCentroidsByIndexes, cosineSim } from './KMeans.js'
+import { KMeans, centroidsByIndexes, normalizedCentroids, cosineSim } from './KMeans.js'
 
 const splitters = [
   '\n',
@@ -34,7 +34,7 @@ $('#aMapper-submit')[0].addEventListener("click", function(event){
 });
 
 function sendData() {
-
+  
   //Read from inputs
   const data = $('#aMapper-input-data')[0].value;
   const splitter = splitters[ $('#aMapper-input-separator')[0].value ];
@@ -49,13 +49,16 @@ function sendData() {
   const tf_idf = TF_IDF(words, docs);
 
   //KMeans.js
-  let clusters = KMeans(tf_idf, K, 1);
-  clusters = sortByLength(clusters);
+  let raw_clusters = KMeans(tf_idf, K, 1);
+  raw_clusters = sortByLength(raw_clusters);
+
+  //function would prob. be good
+  let clusters = findClusterIndexes(tf_idf, raw_clusters);
 
   //should be wild
-  console.log(centroidsByIndexes(tf_idf, clusters));
+  console.log(centroidsByIndexes(tf_idf, clusters)); //not in function rn
   //should be only between 0 and one
-  console.log(normalizedCentroidsByIndexes(tf_idf, clusters));
+  console.log(normalizedCentroids(raw_clusters));
 
   setOutput(clusters, og_docs, tf_idf, words);
 }
@@ -64,13 +67,14 @@ function setOutput(output, docs, tf_idf, words) {
   const outElem = $('#aMapper-output')[0];
   outElem.innerHTML = '';
 
-  const centroids = normalizedCentroidsByIndexes(tf_idf, output);
+  //const centroids = normalizedCentroidsByIndexes(tf_idf, output);
 
   for (const i in output) {
     const group = output[i];
     const article = document.createElement("article");
     const heading = document.createElement("h3");
 
+    /*
     //separate thizz
     let best_wscore = 0;
     let best_w_i = -1;
@@ -88,6 +92,7 @@ function setOutput(output, docs, tf_idf, words) {
     }
     heading.innerHTML =  'Group: ' + words[best_w_i] + ' ' + words[secondbest_w_i];
     article.append(heading);
+    */
 
     group.forEach(function(index){
       //some day write index here aswell
@@ -97,13 +102,43 @@ function setOutput(output, docs, tf_idf, words) {
       p.innerHTML = docs[index];
       article.append(number, p);
 
+      /*
       //separate thizz also
       const dist_p = document.createElement("p");
       dist_p.innerHTML = 'Distance: '+ cosineSim(centroids[i], tf_idf[index]);
       article.append(dist_p);
+      */
     })
     outElem.append(article);
   }
+}
+
+function findClusterIndexes (tf_idf, raw_clusters) {
+  let index_clusters = [];
+  raw_clusters.forEach(raw_cluster => {
+    let index_cluster = [];
+      raw_cluster.forEach(vector => {
+        const index = findIndexFromArrays(tf_idf, vector);
+        index_cluster.push(index);
+      });
+    index_clusters.push(index_cluster);
+  });
+  return index_clusters;
+}
+
+function findIndexFromArrays (matrix, vector) {
+  const V = vector.length;
+  const found = matrix.findIndex(element => {
+    let isSame = true;
+    for (let i = 0; i < V; i++) {
+      if (element[i] != vector[i]) {
+        isSame = false;
+        i = V;
+      }
+    }
+    return isSame;
+  });
+  return found;
 }
 
 function sortByLength(arr) {

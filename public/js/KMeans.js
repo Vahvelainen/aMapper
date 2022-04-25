@@ -1,7 +1,6 @@
-//Refacturointi idiksii:
-//Vittuun handlaaminen erikseen indeksiclustereiden kanssa, jos vectoreiden avulla voidaan myhöemmin löytää indeksit
-//Yhden keskipisteen laskenta omaan funkkariin
-
+//Co-sine sim antaa paremman scoren lähemmille seteille
+//refacturoi seuraavaksi käyttämään "similarityä" distansen sijaan
+//Summan sijaan siitä voi laskea vaikka kesiarvoa vaikka sama asia
 
 export function KMeans(data, K, trackCount = 10) { 
   //Empty cluster occurs only anyore when K is too big for the data, which is good
@@ -18,12 +17,13 @@ export function KMeans(data, K, trackCount = 10) {
       minDistTotal = distTotal;
     }
   }
-  const sortedCluster = sortClustersByDistanceToCenter(data, bestClusters)
-  return sortedCluster;
+  const sortedClusters = sortClustersByDistanceToCenter(bestClusters);
+  return sortedClusters;
 }
 
 function KMeansTrack(data, K) {
     //put document indexes into nearest clusters
+    //no more indexes, just straight up TF-IDFs to clusters
     let centers = pickRandomItems(data, K);
     let clusters = [];
     let centers_moved = true;
@@ -32,11 +32,12 @@ function KMeansTrack(data, K) {
     let iteration_count = 0; //only for debugging
     let distTotal = Infinity; //for comparing tracks
     while (centers_moved) {
-      const mtc = mapToCenters(data, centers);
+      //sometimes drops cluster away in the very first iteration
+      const mtc = mapToCenters(data, centers); //check thizz
       clusters = mtc[0];
       distTotal = mtc[1];
       //calculate new centers
-      let new_centers = normalizedCentroidsByIndexes(data, clusters);
+      let new_centers = normalizedCentroids(clusters); 
 
       ///now that we have deleted empty clusters, this doesnt wrk anymore :)
       let cenDistances = sumOfDistances(centers, new_centers);
@@ -45,7 +46,7 @@ function KMeansTrack(data, K) {
       }
       //only allows 102 iteration before giving up
       //should not happen ever but better safe than sorry
-      if ( iteration_count > -1 ) { 
+      if ( iteration_count > 1000 ) { 
         centers_moved = false;
         console.log('One KMean iteration got stuck and had to stop');
         console.log('center distance: ' + cenDistances);
@@ -58,21 +59,21 @@ function KMeansTrack(data, K) {
     return [clusters, distTotal];
 }
 
-function sortClustersByDistanceToCenter(data, clusters) {
-  const centers = normalizedCentroidsByIndexes(data, clusters);
+function sortClustersByDistanceToCenter(clusters) {
+  const centers = normalizedCentroids(clusters);
   let sortedClusters = [];
   for (const i in clusters) {
     const cluster = clusters[i];
     const center = centers[i];
-    cluster.sort(function(a, b) { 
-      const a_dist = cosineSim(center, data[a]); 
-      const b_dist = cosineSim(center, data[b]); 
+    cluster.sort(function(a, b) {
+      const a_dist = cosineSim(center, a); 
+      const b_dist = cosineSim(center, b); 
       return a_dist - b_dist;
     });
     //for validating this works
     //let distances = [];
     //cluster.forEach(function(index){
-    //  const dist = cosineSim(center, data[index]); 
+    //  const dist = cosineSim(center, index); 
     //  distances.push(dist);
     //});
     //console.log(distances);
@@ -91,15 +92,16 @@ function pickRandomItems(data, K) {
 }
 
 function mapToCenters(data, centers) {
-  //returns array of [clusters by its data indexes, distTotal as sum of every distance between data-item and centroids] 
+  //returns array of [clusters as TF-IDFs, distTotal as sum of every distance between data-item and centroids] 
+  //sometimes makes empty clusters
   //initiate clusters
   let clusters = [];
   for (const center in centers) {
     clusters.push([]);
   }
-  //assign each vector to a nearest center by pushing its index to the cluster
+  //assign each vector to a nearest center by pushing it the cluster
   let distTotal = 0;
-  for (const docI in data) {
+  for (const docI in data) { //could be forEach now
     const doc = data[docI];
     let minDist = Infinity;
     let minI = -1;
@@ -112,142 +114,68 @@ function mapToCenters(data, centers) {
         minI = centI
       }
     }
-    clusters[minI].push(docI);
+    clusters[minI].push(doc);
     distTotal += minDist;
   }
-  return [clusters, distTotal];
+  //remove empty clusters
+  const fltrd_clusters = clusters.filter(cluster => cluster.length > 0);
+
+  return [fltrd_clusters, distTotal];
 }
 
 export function centroidsByIndexes(data, clusters) {
-  const V = data[0].length;
+  return []; //broken for now
+}
+
+export function normalizedCentroids(clusters) {
+  //remove empty clusters
+  const populated_clusters = clusters.filter(cluster => cluster.length > 0);
+  
+  ///initiate centroids
   let centroids = [];
-  clusters.forEach(function(cluster) {
-    let center = [];
-    //go trough each axis of each vector
-    if (cluster.length > 0) {
-      for (let axis = 0; axis < V; axis++) {
-        let loc = 0.;
-        cluster.forEach(function(doc){
-          loc += data[doc][axis];
-        });
-        //the average of coordinates
-        center.push( loc / cluster.length ); 
-      }
-    }
-    centroids.push(center);
+  populated_clusters.forEach(function(cluster){
+    const centroid = normalizedCentroid(cluster)
+    centroids.push(centroid);
   });
+
   return centroids;
 }
 
-export function othernormalizedCentroidsByIndexes(data, clusters, debug = false) {
-  const V = data[0].length;
-  let centroids = [];
-  
-  //are we going to normalize by the cluster itself or by all the tf-ifdf data???
-  //I call all tf-idf data bc why not
-  
-  //for now, remove empty clusters
-  let populated_clusters = [];
-  clusters.forEach(function(cluster){
-    if (cluster.length > 0) {
-      populated_clusters.push(cluster);
-    }
-  });
-
-  ///initiate centroids
-  for (const cluster_i in populated_clusters) {
-    centroids.push( [] );
-  }
-  
-  //go trough each axis
+export function normalizedCentroid(cluster) {
+ const V = cluster[0].length;  
+  let centroid = [];
   for (let axis = 0; axis < V; axis++) {
-    //calculate range of axis here
+    centroid.push(0);
+  }
 
-    // take one axis and calculate the range
-    let data_axis = data.map(function(row) { return row[axis]; });
-    const axis_max = Math.max(...data_axis);
-    const axis_min = Math.min(...data_axis); //min is for almostsure going to be zero
-    const axis_range = axis_max - axis_min;
+  //go trough each axis
+  cluster.forEach( vector => {
+    const max = Math.max(...vector);
+    const min = Math.min(...vector);
+    const range = max - min;
 
-    //go trough each cluster
-    for (let cluster_i in populated_clusters) {
-      const cluster = populated_clusters[cluster_i];
-
-      //Calculate average of each dimension
-      let loc = 0.;
-      cluster.forEach(function(doc){
-        //This is what we need to normalize between zero and one
-        const doc_loc = data[doc][axis];
-        const norm_doc_loc = (doc_loc - axis_min) / axis_range;
-        loc += norm_doc_loc;
-      });
-      //the average of coordinates
-      centroids[cluster_i].push( loc / cluster.length ); 
-    }
-  } //axis
-  return centroids;
-}
-
-export function normalizedCentroidsByIndexes(data, clusters, debug = false) {
-  const V = data[0].length;
-  let centroids = [];
-  
-  //are we going to normalize by the cluster itself or by all the tf-ifdf data???
-  //This time we are trying with the cluster itself bc what i drew in paper n'stuff
-  
-  //for now, remove empty clusters
-  let populated_clusters = [];
-  clusters.forEach(function(cluster){
-    if (cluster.length > 0) {
-      populated_clusters.push(cluster);
+    //go trough each axis
+    for (const axis in centroid) {
+      const loc = vector[axis];
+      const norm_loc = (loc - min) / range; 
+      //in 2D reducing the min actually DOES end up in 0 or 1
+      centroid[axis] += norm_loc;
     }
   });
 
-  ///initiate centroids
-  for (const cluster_i in populated_clusters) {
-    centroids.push( [] );
+  //divide it up by cluster length
+  const N = cluster.length;
+  for (const axis in centroid) {
+    centroid[axis] = centroid[axis] / N;
   }
 
-  //go trough each cluster
-  for (let cluster_i in populated_clusters) {
-    const cluster = populated_clusters[cluster_i];
-  //go trough each axis
-    for (let axis = 0; axis < V; axis++) {
-      //calculate range of axis here
-
-      // take one axis of the cluster and calculate the range from data???
-      //let data_axis = data.map(function(row) { return row[axis]; });
-      let data_cluster_axis = [];
-      cluster.forEach(function(doc_i){ 
-        data_cluster_axis.push( data[doc_i][axis] );
-      });
-      console.log(data_cluster_axis); //thiis is noot what is sopposed to bee
-      const axis_max = Math.max(...data_cluster_axis);
-      const axis_min = Math.min(...data_cluster_axis); //min is for almostsure going to be zero
-      const axis_range = axis_max - axis_min;
-      //Calculate average of each dimension
-      let loc = 0.;
-      if (axis_range > 0) {
-        cluster.forEach(function(doc_i){
-          //This is what we need to normalize between zero and one
-          const doc_loc = data[doc_i][axis];
-          const norm_doc_loc = (doc_loc - axis_min) / axis_range;
-          loc += norm_doc_loc;
-        });
-      }
-      //the average of coordinates
-      centroids[cluster_i].push( loc / cluster.length ); 
-    } //axis
-  }//Cluster
-  //console.log('ajetaan');
-  //console.log(centroids);
-  return centroids;
+  return centroid;
 }
 
 function sumOfDistances(a, b) {
   ///now that we have deleted empty clusters, this doesnt wrk anymore :)
   if (a.length != b.length) {
-    return Infinity;
+    return Infinity; //this shit needs to go and be something else
   }
   let distSum = 0;
   for ( const i in a) {
@@ -258,10 +186,9 @@ function sumOfDistances(a, b) {
 }
 
 export function manhattanDist(a, b) {
-  if (a == b) {
+  if (isSameArray(a, b)) {
     return 0;
   }
-
   let d = 0;
   for (const i in a) {
     d += Math.abs( a[i] - b[i] )
@@ -270,8 +197,8 @@ export function manhattanDist(a, b) {
 }
 
 export function sqrEuclideanDist(a, b) {
-  if (a == b) {
-    return Infinity;
+  if (isSameArray(a, b)) {
+    return 0;
   }
   let d = 0;
   for (const i in a) {
@@ -285,9 +212,6 @@ export function sqrEuclideanDist(a, b) {
 //Additionally, there are better initalisation and center calculating methods for this spherical K-Means (Kim & Cho 2020)
 //function from https://stackoverflow.com/questions/51362252/javascript-cosine-similarity-function
 export function cosineSim(A,B){
-  if (A == B) {
-    return 0;
-  }
   if (A.length == 0 || B.length == 0) {
     ///whyy doeas dos even happen
     return Infinity;
@@ -303,12 +227,23 @@ export function cosineSim(A,B){
   mA = Math.sqrt(mA);
   mB = Math.sqrt(mB);
   var similarity = (dotproduct)/((mA)*(mB));
-  return similarity;
+  return 1 - similarity;
 }
 
 //anotherApproach to cosineSim
 //https://gist.github.com/jesus-seijas-sp/5feb3806f63a63dc7954482c232c4749
 
+function isSameArray(A, B) {
+  const V = A.length;
+  let isSame = true;
+  for (let i = 0; i < V; i++) {
+    if (A[i] != B[i]) {
+      isSame = false;
+      i = V;
+    }
+  }
+  return isSame;
+}
 
 //Unnecesary but good for debugging
 function findNearestPair(data) {
