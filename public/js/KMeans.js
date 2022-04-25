@@ -40,12 +40,12 @@ function KMeansTrack(data, K) {
 
       ///now that we have deleted empty clusters, this doesnt wrk anymore :)
       let cenDistances = sumOfDistances(centers, new_centers);
-      if ( cenDistances <= 0 ) { 
+      if ( cenDistances <= 1e-15 ) { 
         centers_moved = false;
       }
-      //only allows 102 iteration before giving up
+
+      //only allows 22 iteration before giving up
       //should not happen ever but better safe than sorry
-      //when it happens distances between iterations are very very small
       if ( iteration_count > 20 ) { 
         centers_moved = false;
         console.log('One KMean iteration got stuck and had to stop');
