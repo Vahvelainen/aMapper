@@ -1,6 +1,6 @@
 import { splitAndFilterDocs, splitAndFilterWordsFromDocs, lowerAndRemoveSpecialsFromArray } from './SplitsAndFilters.js'
 import { TF_IDF } from './TF-IDF.js'
-import { KMeans, normalizedCentroids, cosineDiff } from './KMeans.js'
+import { SphericalKmeans, normalizedCentroids, cosineDiff } from './SphericalKmeans.js'
 
 const splitters = [
   '\n',
@@ -37,8 +37,8 @@ function sendData() {
   //TF-IDF.js
   const tf_idf = TF_IDF(words, docs); //takes most amount of time with large quantitites
   
-  //KMeans.js
-  let raw_clusters = KMeans(tf_idf, K, 10);
+  //SphericalKmeans.js
+  let raw_clusters = SphericalKmeans(tf_idf, K, 10);
   raw_clusters = sortByLength(raw_clusters);
   let clusters = findClusterIndexes(tf_idf, raw_clusters);
   
