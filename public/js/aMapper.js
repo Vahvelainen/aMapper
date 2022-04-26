@@ -98,7 +98,8 @@ function updateWordAndDocumentCount() {
   //not DRY
   const data = $('#aMapper-input-data')[0].value;
   const splitter = splitters[ $('#aMapper-input-separator')[0].value ];
-  const docs = splitAndFilterDocs(data, splitter);
+  let docs = splitAndFilterDocs(data, splitter);
+  docs = lowerAndRemoveSpecialsFromArray(docs);
   const words = splitAndFilterWordsFromDocs(docs, splitter);
   
   $('#aMapper-word-count')[0].innerHTML = words.length;

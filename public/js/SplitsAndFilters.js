@@ -24,7 +24,8 @@ export function lowerAndRemoveSpecialsFromArray(arr) {
 
 function removeNonWordsFromArray(arr) {
   return arr.filter(function (item) {
-    const fltrdItem = replaceAll(lowerAndremoveSpecials(item), ' ', '')
+    let fltrdItem = replaceAll(lowerAndremoveSpecials(item), ' ', '');
+    fltrdItem = fltrdItem.replace(/\s+/g, ' ').trim(); //Still leves some whitespaces into docs but works enough for now
     return fltrdItem.length > 1;
   });
 }
