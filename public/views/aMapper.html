@@ -1,16 +1,28 @@
 <div class="input">
-  <h2>Input data</h2>
+
+  <div class="head">
+    <h2>Input data</h2>
+    <a href="/" id="aMapper-example-data">Load example data</a>
+  </div>
+
   <form id='aMapper-input'>
   
     <textarea id='aMapper-input-data' placeholder="Put your raw data here..."></textarea>
     
     <div class="parameter">
-      <lable>Amount of clusters </label>
+      <label>Words: </label>
+      <var id='aMapper-word-count'>0</var>      
+      <label>Documents: </label>
+      <var id="aMapper-document-count">0</var>
+    </div>
+    
+    <div class="parameter">
+      <label>Amount of clusters </label>
       <input type='number' value='3' min='1' id="aMapper-input-K">
     </div>
 
     <div class="parameter">
-      <label>Document seprator</label>
+      <label>Document separator</label>
       <select name="Separator" id="aMapper-input-separator">
         <option value="0">Line break '\n'</option>
         <option value="1">Dot ' . '</option>
@@ -18,16 +30,6 @@
         <option value="3">Colon ' : '</option>
         <option value="4">Semicolon ' ; '</option>
       </select>
-    </div>
-    
-    <div class="parameter">
-      <label>Words:</label>
-      <var id='aMapper-word-count'>0</var>      
-    </div>
-
-    <div class="parameter">
-      <label>Documents:</label>
-      <var id="aMapper-document-count">0</var>
     </div>
     
     <button id='aMapper-submit'>
@@ -39,7 +41,10 @@
 </div>
 
 <div class="output">
-  <h2>Output data</h2>
+  <h2>Output</h2>
+  <a href="/" id="aMapper-prev-cluster">Prev</a>
+  <p id="aMapper-prev-cluster">Cluster 0/0</p>
+  <a href="/" id="aMapper-next-cluster">Next</a>
   <div id='aMapper-output'>
     Your output data will be heres
   </div>

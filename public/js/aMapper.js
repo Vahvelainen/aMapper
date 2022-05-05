@@ -17,10 +17,43 @@ $('#aMapper-input-separator')[0].addEventListener("change", function(event){
   updateWordAndDocumentCount();
 });
 
+$('#aMapper-example-data')[0].addEventListener("click", function(event){
+  event.preventDefault();
+  $.get('/public/quote_test.txt', function(example_txt) {
+    $('#aMapper-input-data')[0].value = example_txt;
+    updateWordAndDocumentCount();
+  });
+});
 
 $('#aMapper-submit')[0].addEventListener("click", function(event){
   event.preventDefault();
   sendData();
+});
+
+$('#aMapper-prev-cluster')[0].addEventListener("click", function(event){
+  event.preventDefault();
+  const articles = $('#aMapper-output > article')
+  const K = articles.length;
+  for (let i = 0; i < K; i++) {
+    if (!articles[i].classList.contains('hidden')) {
+      articles[i].classList.add('hidden')
+      articles[Math.max(i-1, 0)].classList.remove('hidden');
+      break;
+    }
+  }
+});
+
+$('#aMapper-next-cluster')[0].addEventListener("click", function(event){
+  event.preventDefault();
+  const articles = $('#aMapper-output > article')
+  const K = articles.length;
+  for (let i = 0; i < K; i++) {
+    if (!articles[i].classList.contains('hidden')) {
+      articles[i].classList.add('hidden')
+      articles[Math.min(i+1, K-1)].classList.remove('hidden');
+      break;
+    }
+  }
 });
 
 function sendData() {
@@ -55,7 +88,9 @@ function setOutput(output, docs, tf_idf, words, raw_clusters) {
     const group = output[i];
     const article = document.createElement("article");
     const heading = document.createElement("h3");
-    
+    if (i > 0) {
+      article.classList.add('hidden');
+    }
     
     //separate thizz
     let best_wscore = 0;
@@ -77,18 +112,19 @@ function setOutput(output, docs, tf_idf, words, raw_clusters) {
     
    
    group.forEach(function(index){
+     const div = document.createElement("div");
      const number = document.createElement("h4");
      number.innerHTML = index;
      const p = document.createElement("p");
      p.innerHTML = docs[index];
-     article.append(number, p);
+     div.append(number, p);
      
      
      //separate thizz also
      const dist_p = document.createElement("p");
      dist_p.innerHTML = 'Distance: '+ cosineDiff(centroids[i], tf_idf[index]);
-     article.append(dist_p);
-     
+     div.append(dist_p);
+     article.append(div);   
     });
     outElem.append(article);
   }

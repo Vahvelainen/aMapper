@@ -4,49 +4,65 @@
     flex-direction: column;
     align-items: center;
     h1 {
-      padding-top: .5em;
-      font-size: 38px;
+      padding-top: 160px;
+      margin-bottom: 80px;
     }
   }
 
   .input {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0 auto 39px;
+    padding: 0 22px;
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     form {
       textarea, input, select{
-        border: solid 1px lightgray;
+        background-color: #EDEDED;
+        border: none;
       }
       .parameter {
-        display: inline-block;
+        display: flex;
+        justify-content: right;
+      }
+      label, #aMapper-word-count {
         margin-right: 1em;
-        margin-bottom: 1em;
+      }
+      var {
+        font-style: normal;
       }
       input, select {
         height: 1.5em;
         width: 4em;
-        border-radius: 5px;
+        border-radius: 3px;
         font-size: 16px;
+        text-align: right;
       }
       select {
-        width: 10em;
+        width: 8em;
       }
       textarea {
-        border-radius: 10px;
-        width: 100%;
-        height: 10em;
+        padding: 0.5em;
+        border-radius: 8px;
+        width: calc(100% - 1em);
+        height: 216px;
       }
       
       button {
         display: block;
-        background-color: #87ffb7;;
+        background-color: #48DC95;
+        color: white;
         border: none;
         border-radius: 5px;
         font-size: 20px;
         padding: 0.5em 2em;
         margin-left: auto;
-        box-shadow: 5px 5px 10px rgb(38 57 147 / 10%);
+        //box-shadow: 5px 5px 10px rgb(38 57 147 / 10%);
         &:hover{
-          background-color: #00ff66;
+          background-color: #1dc574;
         }
         p, h4 {
           margin: 0;
@@ -56,23 +72,49 @@
   }
 
   .output {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #CED4D8;
     h2 {
-      width: fit-content;
-      margin-left: auto;
-      margin-right: auto;
+      margin-top: 38px;
+      margin-left: 24px;
+      margin-bottom: 40px;
+      width: 100%;
+      max-width: none;
+    }
+    a, #aMapper-prev-cluster {
+      width: calc(100% / 3);
+      max-width: none;
+      text-align: center;
+      margin-bottom: 38px;
     }
     #aMapper-output {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      align-items: flex-start;
+      article.hidden {
+        display: none;
+      }
       article {
-        background-color: azure;
-        padding: 1em;
-        border-radius: 10px;
-        border: solid 1px rgb(225 225 225 / 80%);
-        margin-bottom: 1em;
-        box-shadow: 5px 5px 10px #2639931a;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        h3{
+          font-size: 1em;
+          width: 100%;
+          max-width: none;
+          text-align: center;
+        }
+        div {
+          min-width: 280px;
+          background-color: #EDEDED;
+          margin: 0 15px 15px;
+          border-radius: 8px;
+          padding: 2em 1em;
+          //box-shadow: 5px 5px 10px #2639931a;
+        }
+      }
+      @media all and (min-width: 500px) {
+        article div {
+          margin: 0 0 15px 15px!important;
+        }
       }
     }
   }

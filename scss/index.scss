@@ -1,48 +1,42 @@
 @import 'frontpage';
-@import 'nav';
-@import 'footer';
+//@import 'nav';
+//@import 'footer';
 @import 'visualization';
 
 body {
   margin: 0;
-  font-family: Helvetica, Arial;
+  font-family: Montserrat, Helvetica, Arial;
+  font-style: normal;
+  font-weight: 400!important;
   font-size: 16px;
   min-height: 100%;
   line-height: 1.5;
   font-weight: 500;
-  background-color: #dffffb;
+  background-color: azure;
 }
 
 main {
-  border: solid 1px rgb(225 225 225 / 80%);
   max-width: 1400px;
-  margin: 0 auto;
-  padding: 4em 2em 2em;
-  border-radius: 1em;
-  background-color: #fffdf4;
   min-height: 60vh;
-  overflow: hidden;
-  box-shadow: 5px 10px 30px #afabab3d;
+  background-color: white;
+  margin: auto;
 }
 
 h1, h2, h3, h4, h5 {
-  font-family: monospace;
-  font-weight: 700;
+  //font-family: monospace;
+  //font-weight: 700;
 }
 
-p, h1, h2, h3, h4, h5 {
+h1, h2, h3, h4, h5, p, a, label, var {
+  font-weight: 400;
   max-width: 400px;
   margin-top: 0;
   margin-bottom: 1em;
 }
 
-a {
-  color: #009579;
-}
+h1 {font-size: 1.7em}
+h2 {font-size: 1.4em}
 
-@media all and (max-width: 1400px) {
-  section {
-    padding-left: 1em;
-    padding-right: 1em;
-  }
+a {
+  color: #00A976;
 }
