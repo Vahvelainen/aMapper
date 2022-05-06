@@ -72,30 +72,36 @@
   }
 
   .output {
-    display: flex;
-    flex-wrap: wrap;
     background-color: #CED4D8;
-    h2 {
-      margin-top: 38px;
-      margin-left: 24px;
-      margin-bottom: 40px;
-      width: 100%;
-      max-width: none;
+    padding-bottom: 9em;
+    .head {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 800px;
+      margin: 0 auto;
+      h2 {
+        margin-top: 38px;
+        margin-left: 24px;
+        margin-bottom: 40px;
+        width: 100%;
+        max-width: none;
+      }
+      a, #aMapper-curr-cluster {
+        width: calc(100% / 3);
+        max-width: none;
+        text-align: center;
+        margin-bottom: 38px;
+      }
     }
-    a, #aMapper-curr-cluster {
-      width: calc(100% / 3);
-      max-width: none;
-      text-align: center;
-      margin-bottom: 38px;
+    .hidden {
+      display: none!important;
     }
     #aMapper-output {
-      article.hidden {
-        display: none;
-      }
       article {
         display: flex;
         flex-wrap: wrap;
         align-items: flex-start;
+        justify-content: center;
         h3{
           font-size: 1em;
           width: 100%;
@@ -118,6 +124,14 @@
         article div {
           margin: 0 0 15px 15px!important;
         }
+      }
+    }
+    .guide {
+      padding: 150px 22px 0;
+      max-width: 600px;
+      margin: 0 auto;
+      li {
+        font-size: 0.875em;
       }
     }
   }

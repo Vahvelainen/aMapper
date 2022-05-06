@@ -4,6 +4,7 @@ export function setOutput(raw_clusters, docs, tf_idf, words) {
   raw_clusters = sortByLength(raw_clusters);
   let output = findClusterIndexes(tf_idf, raw_clusters);
 
+  $('.output > .head')[0].classList.remove('hidden');
   const outElem = $('#aMapper-output')[0];
   outElem.innerHTML = '';
   
