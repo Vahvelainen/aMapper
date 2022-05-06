@@ -87,6 +87,7 @@
         max-width: none;
       }
       a, #aMapper-curr-cluster {
+        font-size: 1.125em;
         width: calc(100% / 3);
         max-width: none;
         text-align: center;
@@ -102,11 +103,16 @@
         flex-wrap: wrap;
         align-items: flex-start;
         justify-content: center;
+        max-width: 940px;
+        margin: 0 auto;
         h3{
-          font-size: 1em;
+          text-transform: capitalize;
+          padding-top: 2em;
+          font-size: 1.125em;
           width: 100%;
           max-width: none;
           text-align: center;
+          margin-bottom: 2em;
         }
         div {
           min-width: 280px;
