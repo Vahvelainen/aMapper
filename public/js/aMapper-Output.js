@@ -11,11 +11,27 @@ $('#aMapper-next-cluster')[0].addEventListener("click", function(event){
   changeDisplayedCluster(1);
 });
 
+const OutputToggle = $('#aMapper-Output-Toggle')[0];
+OutputToggle.addEventListener("click", function(event){
+  event.preventDefault();
+  const outElem = $('#aMapper-output')[0]
+  if (!outElem.classList.contains('show-all')) {
+    OutputToggle.innerHTML = "Show less"
+    outElem.classList.add('show-all');   
+  } else {
+    console.log(OutputToggle)
+    OutputToggle.innerHTML = "Show all"
+    outElem.classList.remove('show-all');
+  } 
+});
+
 export function setOutput(raw_clusters, docs, tf_idf, words) {
   raw_clusters = sortByLength(raw_clusters);
   let output = findClusterIndexes(tf_idf, raw_clusters);
 
   $('.output > .head')[0].classList.remove('hidden');
+  OutputToggle.classList.remove('hidden');
+
   const outElem = $('#aMapper-output')[0];
   outElem.innerHTML = '';
   
@@ -29,7 +45,7 @@ export function setOutput(raw_clusters, docs, tf_idf, words) {
       article.classList.add('hidden');
     }
     
-    //separate thizz
+    ///Find key words
     let best_wscore = 0;
     let best_w_i = -1;
     let secondbest_w_i = -1;
@@ -46,7 +62,7 @@ export function setOutput(raw_clusters, docs, tf_idf, words) {
     }
     heading.innerHTML =  '"' + words[best_w_i] + ', ' + words[secondbest_w_i] + '"';
     article.append(heading);
-   
+
    group.forEach(function(index){
      const div = document.createElement("div");
      const number = document.createElement("h4");
@@ -66,6 +82,13 @@ export function setOutput(raw_clusters, docs, tf_idf, words) {
      div.append(dist_p);
      article.append(div);   
     });
+
+    const doc_count = document.createElement("p");
+    doc_count.classList.add('doc-count');
+    doc_count.innerHTML = group.length + ' documents in cluster'
+    article.append(doc_count);   
+
+
     outElem.append(article);
   }
 

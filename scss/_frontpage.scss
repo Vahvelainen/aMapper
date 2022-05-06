@@ -105,6 +105,9 @@
         justify-content: center;
         max-width: 940px;
         margin: 0 auto;
+        :nth-child(n+6) {
+          display: none;
+        }
         h3{
           text-transform: capitalize;
           padding-top: 2em;
@@ -125,6 +128,13 @@
             font-size: .875em;
           }
         }
+        .doc-count{
+          display: block;
+          text-align: center;
+          margin: auto;
+          width: 100%;
+          max-width: none;
+        }
       }
       @media all and (min-width: 500px) {
         article div {
@@ -132,13 +142,22 @@
         }
       }
     }
+    #aMapper-output.show-all {
+      article {
+        :nth-child(n+6) {
+          display: initial;
+        }
+      }
+    }
+    #aMapper-Output-Toggle {
+      margin: 0 auto;
+      text-align: center;
+      display: block;
+    }
     .guide {
       padding: 150px 22px 0;
       max-width: 600px;
       margin: 0 auto;
-      li {
-        font-size: 0.875em;
-      }
     }
   }
 }
