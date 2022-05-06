@@ -12,4 +12,4 @@ app.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'index.html'));
 });
 
-app.listen(process.env.PORT || 3000, () => console.log('Server is doing its thing...'));
+app.listen(process.env.PORT || 4000, () => console.log('Server is doing its thing...'));
