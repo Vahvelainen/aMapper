@@ -32,13 +32,15 @@ export function setOutput(raw_clusters, docs, tf_idf, words) {
         best_w_i = word_index;
       }
     }
-    heading.innerHTML =  'Group: ' + words[best_w_i] + ' ' + words[secondbest_w_i];
+    heading.innerHTML =  '"' + words[best_w_i] + ', ' + words[secondbest_w_i] + '"';
     article.append(heading);
    
    group.forEach(function(index){
      const div = document.createElement("div");
      const number = document.createElement("h4");
      number.innerHTML = index;
+     number.classList.add('index');
+
      const p = document.createElement("p");
      p.innerHTML = docs[index];
      div.append(number, p);
@@ -46,39 +48,47 @@ export function setOutput(raw_clusters, docs, tf_idf, words) {
      
      //separate thizz also
      const dist_p = document.createElement("p");
-     dist_p.innerHTML = 'Distance: '+ cosineDiff(centroids[i], tf_idf[index]);
+     const similarityPerscentage = Math.floor( ( 1 - cosineDiff(centroids[i], tf_idf[index]) ) * 100);
+     dist_p.innerHTML = 'Similarity '+ similarityPerscentage + '%';
+     dist_p.classList.add('similarity')
      div.append(dist_p);
      article.append(div);   
     });
     outElem.append(article);
   }
 
+  setCurrClusterHeading(1, output.length);
+
   //this is nor optimal either but works for now
   $('#aMapper-prev-cluster')[0].addEventListener("click", function(event){
     event.preventDefault();
-    const articles = $('#aMapper-output > article')
-    const K = articles.length;
-    for (let i = 0; i < K; i++) {
-      if (!articles[i].classList.contains('hidden')) {
-        articles[i].classList.add('hidden')
-        articles[Math.max(i-1, 0)].classList.remove('hidden');
-        break;
-      }
-    }
+    changeDisplayedCluster(-1);
   });
   
   $('#aMapper-next-cluster')[0].addEventListener("click", function(event){
     event.preventDefault();
-    const articles = $('#aMapper-output > article')
-    const K = articles.length;
-    for (let i = 0; i < K; i++) {
-      if (!articles[i].classList.contains('hidden')) {
-        articles[i].classList.add('hidden')
-        articles[Math.min(i+1, K-1)].classList.remove('hidden');
-        break;
-      }
-    }
+    changeDisplayedCluster(1);
   });
+
+  $('div.output')[0].scrollIntoView({behavior: "smooth"})
+}
+
+function changeDisplayedCluster(direction) {
+  const articles = $('#aMapper-output > article')
+  const K = articles.length;
+  for (let i = 0; i < K; i++) {
+    if (!articles[i].classList.contains('hidden')) {
+      articles[i].classList.add('hidden')
+      const displayIndex = Math.max(Math.min(i+ direction, K - 1), 0)
+      articles[displayIndex].classList.remove('hidden');
+      setCurrClusterHeading(displayIndex + 1, K);
+      break;
+    }
+  }
+}
+
+function setCurrClusterHeading(n, K) {
+  $('#aMapper-curr-cluster')[0].innerHTML = 'Cluster ' + n + '/' + K
 }
 
 function findClusterIndexes (tf_idf, raw_clusters) {

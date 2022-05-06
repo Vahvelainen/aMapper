@@ -82,7 +82,7 @@
       width: 100%;
       max-width: none;
     }
-    a, #aMapper-prev-cluster {
+    a, #aMapper-curr-cluster {
       width: calc(100% / 3);
       max-width: none;
       text-align: center;
@@ -109,6 +109,9 @@
           border-radius: 8px;
           padding: 2em 1em;
           //box-shadow: 5px 5px 10px #2639931a;
+          .similarity, .index {
+            font-size: .875em;
+          }
         }
       }
       @media all and (min-width: 500px) {
