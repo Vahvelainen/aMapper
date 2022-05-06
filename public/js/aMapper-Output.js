@@ -1,5 +1,16 @@
 import { normalizedCentroids, cosineDiff } from './SphericalKmeans.js'
 
+//this is nor optimal either but works for now
+$('#aMapper-prev-cluster')[0].addEventListener("click", function(event){
+  event.preventDefault();
+  changeDisplayedCluster(-1);
+});
+
+$('#aMapper-next-cluster')[0].addEventListener("click", function(event){
+  event.preventDefault();
+  changeDisplayedCluster(1);
+});
+
 export function setOutput(raw_clusters, docs, tf_idf, words) {
   raw_clusters = sortByLength(raw_clusters);
   let output = findClusterIndexes(tf_idf, raw_clusters);
@@ -59,17 +70,6 @@ export function setOutput(raw_clusters, docs, tf_idf, words) {
   }
 
   setCurrClusterHeading(1, output.length);
-
-  //this is nor optimal either but works for now
-  $('#aMapper-prev-cluster')[0].addEventListener("click", function(event){
-    event.preventDefault();
-    changeDisplayedCluster(-1);
-  });
-  
-  $('#aMapper-next-cluster')[0].addEventListener("click", function(event){
-    event.preventDefault();
-    changeDisplayedCluster(1);
-  });
 
   $('div.output')[0].scrollIntoView({behavior: "smooth"})
 }
