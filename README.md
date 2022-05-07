@@ -1,15 +1,21 @@
 # aMapper
- Browser based Ai Affinity mapper tool
+    
+Browser based Ai Affinity mapper tool
+=====================================
 
-Last features to add before aestethics and usability and expalanations:
+### What?
 
-filtering out of special characters from words and documents for TH-IDF and K-mean, Done!
+*   Ai based affinity mapping tool
+*   Tool goups input documents (ie. customer feedback) into similiar themes
+*   Algorithm used is Spherical K-means mapping with TF-IDF vectorization
+*   All in your browser window: no data is transferred trough internet
+*   Yes, I did wrote the algrothms with javascript
+*   Yes, I do know python exists
 
-Returning documents as they were, Done!
+### How?
 
-writing out each documents distance from cluster centroid, this can be used to visually represent "heat" or revelevance of each doc, Done! but seems to be a little useless for now 0-2 green 2-3 orange 3-5 red (5 very very red)
-
-letting user choose the data splitter from options
-Done! Also refactored splitting and flitering functions a little
-
-maybe: TF-IDF and KMeans to objects
+*   Copy paste your raw text data into input field
+*   Select character that separates different parts (documents) in raw data
+*   Choose how many clusters you want the data to be grouped into
+*   Press "Map!" Button to run the grouping algorithm
+*   Navigate between clusters with "prev" and "next" buttons
