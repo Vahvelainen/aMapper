@@ -1,21 +1,21 @@
 export function TF_IDF(words, docs) {
-  //TF-IDF vecktor calculation
+  //TF-IDF vector calculation
 
-  //Go over each unique word and calculate its document frequency
-  let docFs = []; //taulukon pituudeksi tulee sama ku sanoilla
+  //Word document frequency
+  let docFs = [];
   words.forEach(function(word){
     let docF = 0;
     docs.forEach(function(doc){
-      const docArr = doc.split(' '); //If it works, dont optimize it
-      if (countOccurrences(docArr, word)) {
+      const docArr = doc.split(' '); //split prevents shorter words from matching to longer ones
+      if (docArr.includes(word)) {
         docF ++;
       }
     });
     docFs.push( docF / docs.length);
   });
 
-  //Go trough each doc and each word to calculate its term frequency, and its TF-IDF representation
-  let termFs = []; //term frequesnsies for debugging
+  //Term frequency, and TF-IDF representation
+  let termFs = []; //only for debugging
   let tf_idf = [];
   docs.forEach(function(doc){
     const docArr = doc.split(' ');
