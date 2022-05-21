@@ -1,16 +1,29 @@
 .visualization {
   .visualization-box {
+    margin: 8em auto 0;
     position: relative;
     height: 40em;
     width: 40em;
     border: solid 1px gray;
     border-radius: 10px;
+    background: 
+      linear-gradient(to top right,
+        rgba(0,0,0,0) 0%,
+        rgba(0,0,0,0) calc(50% - 0.8px),
+        rgba(0,0,0,1) 50%,
+        rgba(0,0,0,0) calc(50% + 0.8px),
+        rgba(0,0,0,0) 100%);
     .dot{
       position: absolute;
       height: 10px;
       width: 10px;
       background-color: red;
       border-radius: 999px;
+      transform: translate(-50%, 50%)
     }
+  }
+  button {
+    display: block;
+    margin: 1em auto;
   }
 }

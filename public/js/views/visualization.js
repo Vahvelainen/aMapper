@@ -7,7 +7,7 @@ export default class extends AbstractView {
   }
   
   async getHtml() {
-    $('#app').attr('class', 'visualization');
+    $('#app').attr('class', 'frontpage visualization');
     return '/public/views/visualization.html';
   }
 }

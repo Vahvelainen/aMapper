@@ -1,3 +1,25 @@
+////For vizualition
+export function SphericalKmeans2(data, K = 2, trackCount = 1, iteration_limit = 20, tolerance = 1e-15 ) { 
+  //Empty cluster occurs only anyore when K is too big for the data, which is good
+  let bestClusters = [];
+  let minDistTotal = Infinity;
+
+  //start tracks and find the one with lowest total distance from centers
+  for (let i = 0; i < trackCount; i++) {
+    const track = SphericalKmeansTrack(data, K, iteration_limit, tolerance);
+    const clusters = track[0]
+    const distTotal = track [1];
+    if (distTotal < minDistTotal) {
+      bestClusters = clusters;
+      minDistTotal = distTotal;
+    }
+  }
+  
+  const sortedClusters = sortClustersByDistanceToCenter(bestClusters);
+  return [sortedClusters, minDistTotal]
+}
+//
+
 export function SphericalKmeans(data, K = 2, trackCount = 1, iteration_limit = 20, tolerance = 1e-15 ) { 
   //Empty cluster occurs only anyore when K is too big for the data, which is good
   let bestClusters = [];
