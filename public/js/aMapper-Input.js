@@ -23,6 +23,7 @@ const docCount =$('#aMapper-document-count')[0];
 export function intitiateInputs() {
   
   dataInputField.addEventListener("change", function(event){
+    dataInputField.value = removeSequentialLineBreaks(dataInputField.value, 2);
     updateWordAndDocumentCount();
   });
   splitterSelector.addEventListener("change", function(event){
@@ -46,6 +47,16 @@ export function intitiateInputs() {
     sendData(data, splitter, K);
   });
 
+}
+
+function removeSequentialLineBreaks(input, maxRepeat = 1) {
+  const find = "\n".repeat(maxRepeat + 1);
+  const replace = "\n".repeat(maxRepeat);
+  let output = input.replace(find, replace);
+  if (output.includes(find)) {
+    output = removeSequentialLineBreaks(output, maxRepeat);
+  }
+  return output;
 }
 
 function updateWordAndDocumentCount() {
