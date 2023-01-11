@@ -3,6 +3,8 @@
 Browser based Ai Affinity mapper tool
 =====================================
 
+note: Code is very much in a work in progress and has some weirdness caused mainly by lack of experience in programming and laziness. I migh or migh not to clean the repo in the near future.
+
 ### What?
 
 *   Ai based affinity mapping tool
