@@ -9,7 +9,7 @@ app.use('/public', express.static(path.resolve(__dirname, 'public')));
 
 //Every path to Index.html
 app.get('/*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(process.env.PORT || 4000, () => console.log('Server is doing its thing at http://localhost:4000/'));
