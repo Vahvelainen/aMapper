@@ -5,19 +5,98 @@
   <meta charset='UTF-8'>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-  <title>Style Xperiments by Leevi Vahvelainen</title>
+  <title>aMapper - Browser based Ai affinity mapper tool</title>
   <link rel='stylesheet' href='/public/css/index.css'>
   <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-  <script type='module' src='/public/js/app.js'></script>
+  <script type='module' src='/public/js/aMapper.js'></script>
 
 </head>
 <body>
-  <noscript>You need javascript to see this page ¯\_(ツ)_/¯</noscript>
-  <nav></nav>
+  <noscript>You need javascript to use this page ¯\_(ツ)_/¯</noscript>
   <main id='app'>
-    Kaikki toimii, toistaiseksi
-  </main>
-  <footer></footer>
+    <div class="welcome">
+      <h1>aMapper</h1>
+      <section>
+        <div class="input">
 
+          <div class="head">
+            <h2>Input data</h2>
+            <a href="/" id="aMapper-example-data">Load example data</a>
+          </div>
+        
+          <form id='aMapper-input'>
+          
+            <textarea id='aMapper-input-data' placeholder="Put your raw data here..."></textarea>
+            
+            <div class="parameter">
+              <label>Words: </label>
+              <var id='aMapper-word-count'>0</var>      
+              <label>Documents: </label>
+              <var id="aMapper-document-count">0</var>
+            </div>
+            
+            <div class="parameter">
+              <label>Amount of clusters </label>
+              <input type='number' value='10' min='1' id="aMapper-input-K">
+            </div>
+        
+            <div class="parameter">
+              <label>Document separator</label>
+              <select name="Separator" id="aMapper-input-separator">
+                <option value="0">Line break '\n'</option>
+                <option value="1">Dot ' . '</option>
+                <option value="2">Comma ' , '</option>
+                <option value="3">Colon ' : '</option>
+                <option value="4">Semicolon ' ; '</option>
+              </select>
+            </div>
+            
+            <button id='aMapper-submit'>
+              <h4>
+                Map!
+              </h4>
+            </button>
+          </form>
+        </div>
+        
+        <div class="output">
+          <div class="head hidden">
+            <h2>Output</h2>
+            <a href="/" id="aMapper-prev-cluster">Prev</a>
+            <p id="aMapper-curr-cluster">Cluster 0/0</p>
+            <a href="/" id="aMapper-next-cluster">Next</a>
+          </div>
+          <div id='aMapper-output'>
+          </div>
+          <a href="/" id="aMapper-Output-Toggle" class="hidden">Show all</a>
+        
+          <div class="guide">
+            <h3>
+              What?
+            </h3>
+            <ul>
+              <li>Ai based affinity mapping tool</li>
+              <li>Tool goups input documents (ie. customer feedback) into similiar themes</li>
+              <li>Algorithm used is Spherical K-means mapping with TF-IDF vectorization</li>
+              <li>All in your browser window: no data is transferred trough internet</li>
+              <li>Yes, I did wrote the algrothms with javascript</li>
+              <li>Yes, I do know python exists</li>
+            </ul>
+            <h3>
+              How?
+            </h3>
+            <ul>
+              <li>Copy paste your raw text data into input field</li>
+              <li>Select character that separates different parts (documents) in raw data</li>
+              <li>Choose how many clusters you want the data to be grouped into</li>
+              <li>Press "Map!" Button to run the grouping algorithm</li>
+              <li>Navigate between clusters with "prev" and "next" buttons</li>
+            </ul>
+          </div>
+        </div>
+        
+      </section>
+    </div>
+  </main>
 </body>
 </html>
