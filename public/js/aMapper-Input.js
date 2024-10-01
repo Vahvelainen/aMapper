@@ -32,7 +32,7 @@ export function intitiateInputs() {
   
   exampleDataLink.addEventListener("click", function(event){
     event.preventDefault();
-    $.get('/public/quote_test.txt', function(example_txt) {
+    $.get('../quote_test.txt', function(example_txt) {
       dataInputField.value = example_txt;
       updateWordAndDocumentCount();
     });
