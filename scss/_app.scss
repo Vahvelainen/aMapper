@@ -158,6 +158,10 @@ main {
       padding: 150px 22px 0;
       max-width: 600px;
       margin: 0 auto;
+      .note {
+        font-size: 14px;
+        max-width: none;
+      }
     }
   }
 }
