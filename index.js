@@ -4,12 +4,12 @@ const path = require('path')
 
 const app = express();
 
-//Static folder works for stuff
-app.use('/public', express.static(path.resolve(__dirname, 'public')));
+// Serve static files from the public folder at the root level
+app.use(express.static(path.resolve(__dirname, 'public')));
 
-//Every path to Index.html
+// Route to serve index.html for any non-file request
 app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
 
 app.listen(process.env.PORT || 4000, () => console.log('Server is doing its thing at http://localhost:4000/'));
