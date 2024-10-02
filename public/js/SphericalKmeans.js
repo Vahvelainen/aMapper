@@ -6,8 +6,8 @@ export function SphericalKmeans(data, K = 2, trackCount = 1, iteration_limit = 2
   //start tracks and find the one with lowest total distance from centers
   for (let i = 0; i < trackCount; i++) {
     const track = SphericalKmeansTrack(data, K, iteration_limit, tolerance);
-    const clusters = track[0]
-    const distTotal = track [1];
+    const clusters = track.clusters;
+    const distTotal = track.distTotal;
     if (distTotal < minDistTotal) {
       bestClusters = clusters;
       minDistTotal = distTotal;
@@ -29,8 +29,8 @@ function SphericalKmeansTrack(data, K, iteration_limit, tolerance) {
     while (centers_moved) {
       //Map data points to nearest center
       const mtc = mapToCenters(data, centers);
-      clusters = mtc[0];
-      distTotal = mtc[1];
+      clusters = mtc.clusters;
+      distTotal = mtc.distTotal;
 
       //Calclulate new center based on formed clusters
       let new_centers = normalizedCentroids(clusters); 
@@ -53,7 +53,7 @@ function SphericalKmeansTrack(data, K, iteration_limit, tolerance) {
         console.log('iterations: ' +iteration_count);
       }
     }
-    return [clusters, distTotal];
+    return {clusters: clusters, distTotal: distTotal};
 }
 
 function sortClustersByDistanceToCenter(clusters) {
@@ -115,7 +115,7 @@ function mapToCenters(data, centers) {
   //remove empty clusters, if happened (should not be common)
   const fltrd_clusters = clusters.filter(cluster => cluster.length > 0);
 
-  return [fltrd_clusters, distTotal];
+  return {clusters: fltrd_clusters, distTotal: distTotal};
 }
 
 export function normalizedCentroids(clusters) {
